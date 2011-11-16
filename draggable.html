@@ -1,0 +1,101 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<title>Test Image Dragging Page</title>
+		<link type="text/css" href="css/ui-lightness/jquery-ui-1.8.16.custom.css" rel="stylesheet" />	
+		<script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
+		<script type="text/javascript" src="js/jquery-ui-1.8.16.custom.min.js"></script>
+    <style>
+        #draggable { width: 150px; height: 150px; padding: 0.5em; }
+        #containment-wrapper { width: 95%; height:500px; border:2px solid #ccc; padding: 10px; }
+	</style>
+    <script>
+    var posArray=new Array();
+    var imgCounter=0;
+	$(function() {
+		$( "#draggable" ).draggable();
+		$( ".dragimg" ).draggable({
+			refreshPositions : true,
+			//stop: function(event, ui) {console.log(ui); alert(ui.helper.attr("id"));  alert(ui.position.left);}
+            //stop: function(event, ui) {console.log(ui);}
+            stop: function(event, ui) {updatePositions(ui.helper.attr("id"), ui.helper.attr("src"), ui.position), console.log(posArray)}
+			//alert ("Draggable");
+		});
+
+	});
+
+    function updatePositions(id, img, position) {
+        //alert("Got id" + id + " for image " + img + " and position left " + position.left + " and position top " + position.top);
+        var data=new Array(img, position);
+        console.log(data);
+
+        posArray[id]=data;
+    }
+
+    function returnPositions() {
+        // Iterate through each image/position combo in the position array
+        // Need to come up with some format for posting this to another page to draw image.
+        for (var i in posArray) {
+            var localPos=posArray[i];
+            var img=localPos[0];
+            var pos=localPos[1];
+            alert("Img " + img + " and location " + pos.left + " " + pos.top);
+        }
+
+    }
+
+    function addImg(imgSrc) {
+        imgCounter++;
+        $('#demo').prepend('<img id="' + imgSrc + imgCounter + '" src="' + imgSrc + '" class="dragimg" />')
+	    $(function() {            
+            $( ".dragimg" ).draggable({
+                containment: "#containment-wrapper",
+                create: function(event, ui) {console.log(ui.position)},
+                stop:   function(event, ui) {updatePositions(ui.helper.attr("id"), ui.helper.attr("src"), ui.position), console.log(posArray)}
+    		});
+		});
+
+    }
+
+	function testfunc() {
+		//alert("Clicked me!");
+		var arraysOfIds = $('#demo').find('img').map(function(){
+                       return this.id;
+                   }).get();
+		//$('$demo img').each(function(index) {
+		//var testVar = $('#demo').find('img');
+		var testVar = $('#demo').find('draggable');
+		var imgList = $('#demo img');
+		console.log(arraysOfIds);
+		//console.log(imgList);
+		//alert(arraysOfIds);
+		console.log($('#demo img').get());
+		for (var i=0; i < arraysOfIds.length; i++) {
+			alert("Image ID is " + arraysOfIds[i]);
+		}
+		//alert($('#demo img').get(0));
+		//alert ("Array of IDs" + arraysOfIds);
+	}
+	</script>
+
+
+<div id="containment-wrapper">
+<div id="demo" class="demo">
+
+<div id="draggable" class="ui-widget-content">
+	<p>Drag me around</p>
+</div>
+
+
+</div><!-- End demo -->
+</div>
+<form>
+    <input type="button" value="Get Positions" onclick="returnPositions()" />
+    <input type="button" value="Add an image" onclick="addImg('slide1-11.png')" />
+</form>
+
+
+<div class="demo-description" style="display: none; ">
+<p>Enable draggable functionality on any DOM element. Move the draggable object by clicking on it with the mouse and dragging it anywhere within the viewport.</p>
+</div><!-- End demo-description -->
+</html>
