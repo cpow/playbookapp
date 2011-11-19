@@ -7,8 +7,15 @@
 		<script type="text/javascript" src="/javascript/jquery-ui-1.8.16/js/jquery-ui-1.8.16.custom.min.js"></script>
     <style>
         #draggable { width: 150px; height: 150px; padding: 0.5em; }
-        #containment-wrapper { width: 95%; height:500px; border:2px solid #ccc; padding: 10px; }
-	</style>
+	    #deleteImage { width: 150px; height:100px; padding: 0.5em; margin: 10px; position:absolute ; bottom:250}
+        #containment-wrapper { width: 600px; height:600px; border:2px solid #ccc; padding: 10px; float:left}
+        #thumbdiv { width: 200px; height:500px; border:2px solid #fff; padding: 3px; float:right}
+        .thumbImg {
+           cursor:pointer;
+	   cursor:hand;
+        }
+
+    </style>
     <script>
     var posArray=new Array();
     var imgCounter=0;
@@ -21,7 +28,12 @@
             stop: function(event, ui) {updatePositions(ui.helper.attr("id"), ui.helper.attr("src"), ui.position), console.log(posArray)}
 			//alert ("Draggable");
 		});
-
+		$( "#deleteImage" ).droppable({
+			drop: function( event, ui ) {
+                console.log(ui.draggable);                        
+                ui.draggable.remove();
+			}
+		});
 	});
 
     function updatePositions(id, img, position) {
@@ -46,7 +58,7 @@
 
     function addImg(imgSrc) {
         imgCounter++;
-        $('#demo').prepend('<img id="' + imgSrc + imgCounter + '" src="' + imgSrc + '" class="dragimg" />')
+        $('#containment-wrapper').prepend('<img id="' + imgSrc + imgCounter + '" src="' + imgSrc + '" class="dragimg" />')
 	    $(function() {            
             $( ".dragimg" ).draggable({
                 containment: "#containment-wrapper",
@@ -57,43 +69,24 @@
 
     }
 
-	function testfunc() {
-		//alert("Clicked me!");
-		var arraysOfIds = $('#demo').find('img').map(function(){
-                       return this.id;
-                   }).get();
-		//$('$demo img').each(function(index) {
-		//var testVar = $('#demo').find('img');
-		var testVar = $('#demo').find('draggable');
-		var imgList = $('#demo img');
-		console.log(arraysOfIds);
-		//console.log(imgList);
-		//alert(arraysOfIds);
-		console.log($('#demo img').get());
-		for (var i=0; i < arraysOfIds.length; i++) {
-			alert("Image ID is " + arraysOfIds[i]);
-		}
-		//alert($('#demo img').get(0));
-		//alert ("Array of IDs" + arraysOfIds);
-	}
-	</script>
+    </script>
 
 
 <div id="containment-wrapper">
-<div id="demo" class="demo">
-
-<div id="draggable" class="ui-widget-content">
-	<p>Drag me around</p>
+<div id="deleteImage" class="ui-widget-header">
+	<p>Trashcan (Delete Img)</p>
+</div>
 </div>
 
 
-</div><!-- End demo -->
+<div id="thumbdiv">
+    <p>Click on Thumbnail to Add Image</p>
+    <img id='testImg_thumb.jpg' src='images/testImg_thumb.jpg' class='thumbImg' onclick="addImg('images/testImg.jpg')">
+    <img id='testImg2_thumb.jpg' src='images/testImg2_thumb.jpg' class='thumbImg' onclick="addImg('images/testImg2.jpg')">
+    <form>
+        <input type="button" value="Get Positions" onclick="returnPositions()" />
+    </form>
 </div>
-<form>
-    <input type="button" value="Get Positions" onclick="returnPositions()" />
-    <input type="button" value="Add an image" onclick="addImg('images/testImg.jpg')" />
-</form>
-
 
 <div class="demo-description" style="display: none; ">
 <p>Enable draggable functionality on any DOM element. Move the draggable object by clicking on it with the mouse and dragging it anywhere within the viewport.</p>
