@@ -5,72 +5,33 @@
 		<link type="text/css" href="/javascript/jquery-ui-1.8.16/css/ui-lightness/jquery-ui-1.8.16.custom.css" rel="stylesheet" />	
 		<script type="text/javascript" src="/javascript/jquery-1.6.2/jquery-1.6.2.js"></script>
 		<script type="text/javascript" src="/javascript/jquery-ui-1.8.16/js/jquery-ui-1.8.16.custom.min.js"></script>
+		<script type="text/javascript" src="/javascript/draw.js"></script>
     <style>
-        #draggable { width: 150px; height: 150px; padding: 0.5em; }
-	    #deleteImage { width: 150px; height:100px; padding: 0.5em; margin: 10px; position:absolute ; bottom:250}
-        #containment-wrapper { width: 600px; height:600px; border:2px solid #ccc; padding: 10px; float:left}
+        #draggable { width: 150px; height: 150px;  }
+	    #deleteImage { width: 100%; height:100px; position:absolute; bottom:0}
+        #containment-wrapper { width: 600px; height:600px; border:2px solid #ccc; padding: 10px; float:left; position:relative}
         #thumbdiv { width: 200px; height:500px; border:2px solid #fff; padding: 3px; float:right}
-        .thumbImg {
-           cursor:pointer;
-	   cursor:hand;
-        }
-
+        .thumbImg { cursor:pointer; cursor:hand;}
     </style>
     <script>
-    var posArray=new Array();
-    var imgCounter=0;
-	$(function() {
-		$( "#draggable" ).draggable();
-		$( ".dragimg" ).draggable({
-			refreshPositions : true,
-			//stop: function(event, ui) {console.log(ui); alert(ui.helper.attr("id"));  alert(ui.position.left);}
-            //stop: function(event, ui) {console.log(ui);}
-            stop: function(event, ui) {updatePositions(ui.helper.attr("id"), ui.helper.attr("src"), ui.position), console.log(posArray)}
-			//alert ("Draggable");
-		});
-		$( "#deleteImage" ).droppable({
-			drop: function( event, ui ) {
-                console.log(ui.draggable);                        
-                ui.draggable.remove();
-			}
-		});
-	});
-
-    function updatePositions(id, img, position) {
-        //alert("Got id" + id + " for image " + img + " and position left " + position.left + " and position top " + position.top);
-        var data=new Array(img, position);
-        console.log(data);
-
-        posArray[id]=data;
-    }
-
-    function returnPositions() {
-        // Iterate through each image/position combo in the position array
-        // Need to come up with some format for posting this to another page to draw image.
-        for (var i in posArray) {
-            var localPos=posArray[i];
-            var img=localPos[0];
-            var pos=localPos[1];
-            alert("Img " + img + " and location " + pos.left + " " + pos.top);
-        }
-
-    }
-
-    function addImg(imgSrc) {
-        imgCounter++;
-        $('#containment-wrapper').prepend('<img id="' + imgSrc + imgCounter + '" src="' + imgSrc + '" class="dragimg" />')
-	    $(function() {            
-            $( ".dragimg" ).draggable({
-                containment: "#containment-wrapper",
-                create: function(event, ui) {console.log(ui.position)},
-                stop:   function(event, ui) {updatePositions(ui.helper.attr("id"), ui.helper.attr("src"), ui.position), console.log(posArray)}
-    		});
-		});
-
-    }
-
+        $(function() {
+        	$( "#draggable" ).draggable();
+        	$( ".dragimg" ).draggable({
+        		refreshPositions : true,
+        		//stop: function(event, ui) {console.log(ui); alert(ui.helper.attr("id"));  alert(ui.position.left);}
+                //stop: function(event, ui) {console.log(ui);}
+                stop: function(event, ui) {updatePositions(ui.helper.attr("id"), ui.helper.attr("src"), ui.position), console.log(posArray)}
+        		//alert ("Draggable");
+        	});
+        	$( "#deleteImage" ).droppable({
+        		drop: function( event, ui ) {
+                    console.log(ui.draggable);                        
+                    ui.draggable.remove();
+                    imgCounter--;
+        		}
+        	});
+        });
     </script>
-
 
 <div id="containment-wrapper">
 <div id="deleteImage" class="ui-widget-header">
@@ -81,8 +42,8 @@
 
 <div id="thumbdiv">
     <p>Click on Thumbnail to Add Image</p>
-    <img id='testImg_thumb.jpg' src='images/testImg_thumb.jpg' class='thumbImg' onclick="addImg('images/testImg.jpg')">
-    <img id='testImg2_thumb.jpg' src='images/testImg2_thumb.jpg' class='thumbImg' onclick="addImg('images/testImg2.jpg')">
+    <img id='testImg_thumb.jpg' src='images/testImg_thumb.jpg' class='thumbImg' onclick="addImg('images/testImg.jpg', 'containment-wrapper')">
+    <img id='testImg2_thumb.jpg' src='images/testImg2_thumb.jpg' class='thumbImg' onclick="addImg('images/testImg2.jpg', 'containment-wrapper')">
     <form>
         <input type="button" value="Get Positions" onclick="returnPositions()" />
     </form>

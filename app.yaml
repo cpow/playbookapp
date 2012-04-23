@@ -10,5 +10,9 @@ handlers:
 - url: /javascript
   static_dir: javascript
 
+- url: /helloworld.py
+  script: helloworld.py
+
 - url: .*
   script: main.py
+
