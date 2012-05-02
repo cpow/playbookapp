@@ -34,4 +34,27 @@ function addImg(imgSrc, dstDiv) {
 	});
 
 }
+function getPos(el) {
+    // yay readability
+    for (var lx=0, ly=0;
+         el != null;
+         lx += el.offsetLeft, ly += el.offsetTop, el = el.offsetParent);
+    return {x: lx,y: ly};
+}
+
+function submitPlay() {
+    var playname = $("#playname").val();
+    var positions = "";
+    console.log(playname);
+    console.log(posArray);
+    for (var i in posArray) {
+        var localPos=posArray[i];
+        var img=localPos[0];
+        var pos=localPos[1];
+        console.log(img);
+    }
+
+//    returnPositions();
+    $.post('submitplay', { playname: playname , positions: posArray });
+}
 

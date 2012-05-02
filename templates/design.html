@@ -1,0 +1,77 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" containment-wrapper="text/html; charset=iso-8859-1" />
+		<title>Test Image Dragging Page</title>
+		<link type="text/css" href="../javascript/jquery-ui-1.8.16/css/ui-lightness/jquery-ui-1.8.16.custom.css" rel="stylesheet" />	
+		<script type="text/javascript" src="../javascript/jquery-1.6.2/jquery-1.6.2.js"></script>
+		<script type="text/javascript" src="../javascript/jquery-ui-1.8.16/js/jquery-ui-1.8.16.custom.min.js"></script>
+        <script type="text/javascript" src="../javascript/draw.js"></script>
+		<link type="text/css" href="../css/playbook.css" rel="stylesheet" />	
+
+        <style>
+        </style>
+    </head>
+
+    <script>
+$(document).ready(function() {
+    $("#containment-wrapper").droppable({
+        accept: '.thumbImg',
+        drop: function(event, ui) {
+                $(this).append($(ui.draggable).clone());
+                $("#containment-wrapper .thumbImg").addClass("item").attr('id', $(".item")[0].id + imgCounter);
+                $(".item").removeClass("ui-draggable thumbImg");
+                console.log($(".item")[0].id);
+                console.log($(".item")[0].src);
+                $(".item").draggable({
+            		refreshPositions : true,
+                    stack : ".item",
+                    // TODO - Need to update positions on draggable creation.
+                    //create:  function(event, ui) {updatePositions($(this).id, $(this).src, ui.position), console.log(posArray)},
+                    //create: function(event, ui) {console.log($(this)[0]).src},
+                    stop: function(event, ui) {updatePositions(ui.helper.attr("id"), ui.helper.attr("src"), ui.position), console.log(ui.parent), console.log(posArray)}
+
+                });
+                imgCounter++;
+        }
+    });
+	$( "#trash" ).droppable({
+    	drop: function( event, ui ) {
+            console.log(ui.draggable[0].className);
+            // We only want to delete the draggable object if it is somethat that has been cloned.
+            // Do not want to delete the thumb image.
+            var className=ui.draggable[0].className;
+            if (className.indexOf("item") != -1) {  
+                ui.draggable.remove();
+                imgCounter--;
+            }
+        }
+    });
+    $(".thumbImg").draggable({
+        helper: 'clone',
+    });
+    $(function() {
+		$( "input:submit" ).button();
+	});
+});
+    </script>
+        <div id="containment-wrapper">
+        </div>
+        <div id='thumbdiv' class="ui-corner-all">
+            <p>Click on Thumbnail to Add Image</p>
+               {% for play_img in play_img_list %}
+                   <img id='{{play_img}}.jpg' src='/images/{{play_img}}.jpg' class='thumbImg'>
+                {% endfor %}
+        </div>
+        <div id="forms">
+            <input type="text" id='playname' />
+            <input type="submit" value="Add Play" onclick="submitPlay()">
+            <input type="submit" value="Return Pos" onclick="returnPositions()">
+        </div>
+        <div id="trash" class="ui-corner-all">
+            <p>Deposit rubbish here.</p>
+        </div>
+        <div id="footer">
+            <a href="{{ login_url }}">{{ login_text }}</a>
+        </div>
+</html>
+

@@ -25,19 +25,79 @@ from google.appengine.ext.webapp import util
 from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
 
+def get_image_list():
+    return ["testImg",
+            "testImg2"]
+
+class Design(webapp.RequestHandler):
+  def get(self):
+    user = users.get_current_user()
+    greetings = "Welcome to the Football Playbook Creater!"
+    if not user:
+      login_url = users.create_login_url(self.request.uri)
+      login_text = 'Login'
+    else:
+      login_url = users.create_logout_url(self.request.uri)
+      login_text = 'Logout'
+
+    #play_img_list=dirList=os.listdir(play_images_dir)
+    play_img_list=get_image_list()
+
+    template_values = {}
+    template_values = {
+        'greetings': greetings,
+        'login_url': login_url,
+        'login_text': login_text,
+        'play_img_list': play_img_list
+    }
+    #path = os.path.join(os.path.dirname(__file__), 'templates/design2.html')
+    path = os.path.join(os.path.dirname(__file__), 'templates/design.html')
+    self.response.out.write(template.render(path, template_values))
+
+
+class SubmitPlay(webapp.RequestHandler):
+  def get(self):
+    user = users.get_current_user()
+    greetings = "Welcome to the Football Playbook Creater!"
+    if not user:
+        login_url = users.create_login_url(self.request.uri)
+        login_text = 'Login'
+        action="Add Play"
+        template_values = {}
+        template_values = {
+          'action': action,
+          'login_url': login_url,
+          'login_text': login_text,
+        }
+
+        path = os.path.join(os.path.dirname(__file__), 'templates/accessdenied.html')
+        self.response.out.write(template.render(path, template_values))
+
+    else:
+      login_url = users.create_logout_url(self.request.uri)
+      login_text = 'Logout'
+  def post(self):
+    self.response.out.write('<html><body>You wrote:<pre>')
+    self.response.out.write(cgi.escape(self.request.get('playname')))
+    self.response.out.write('<BR>You wrote:')
+    self.response.out.write(cgi.escape(self.request.get('positions')))
+    self.response.out.write('</pre></body></html>')
+
 
 class MainHandler(webapp.RequestHandler):
   def get(self):
     user = users.get_current_user()
     if user:
       template_values = {}
-      path = os.path.join(os.path.dirname(__file__), 'templates/index.html')
+      path = os.path.join(os.path.dirname(__file__), 'templates/design.html')
       self.response.out.write(template.render(path, template_values))
     else:
       self.redirect(users.create_login_url(self.request.uri)) 
 
 def main():
-  application = webapp.WSGIApplication([('/', MainHandler)],
+  application = webapp.WSGIApplication([('/', MainHandler),
+                                        ('/design', Design),
+                                        ('/submitplay', SubmitPlay)],
                                          debug=True)
   util.run_wsgi_app(application)
 
