@@ -25,6 +25,8 @@ from google.appengine.ext.webapp import util
 from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
 
+from django.utils import simplejson as json
+
 def get_image_list():
     return ["testImg",
             "testImg2"]
